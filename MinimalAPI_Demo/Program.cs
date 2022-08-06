@@ -19,6 +19,14 @@ builder.Services.AddScoped<IDbConnection>((s) =>
 var app = builder.Build();
 
 app.MapGet("/", (IProductRepo productRepo) => productRepo.GetProducts());
+app.MapGet("/GetAllProducts", (IProductRepo productRepo) => productRepo.GetProducts());
+
+app.MapPost("/InsertProduct", (IProductRepo productRepo, Product product) =>
+{
+    int lastProductId = productRepo.GetProducts().LastOrDefault().ProductID;
+    product.ProductID = ++lastProductId;
+    productRepo.InsertProduct(product);
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
