@@ -1,8 +1,10 @@
-﻿public interface IProductRepo
+﻿namespace MinimalAPI_Demo;
+
+public interface IProductRepo
 {
-    void DeleteProduct(Product prod);
-    Product GetProduct(int id);
     IEnumerable<Product> GetProducts();
+    Product GetProduct(int id);
     void InsertProduct(Product prod);
     void UpdateProduct(Product prod);
+    void DeleteProduct(int id);
 }

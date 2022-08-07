@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using System.Data;
 
+namespace MinimalAPI_Demo;
+
 public class ProductRepo : IProductRepo
 {
     private readonly IDbConnection _connection;
@@ -17,7 +19,7 @@ public class ProductRepo : IProductRepo
 
     public Product GetProduct(int id)
     {
-        return _connection.QuerySingleOrDefault<Product>("SELECT * FROM bestbuy.products WHERE ProductID = @id;", new { id = id });
+        return _connection.QuerySingleOrDefault<Product>("SELECT * FROM bestbuy.products WHERE ProductID = @id;", new { id });
     }
 
     public void InsertProduct(Product prod)
@@ -29,14 +31,14 @@ public class ProductRepo : IProductRepo
 
     public void UpdateProduct(Product prod)
     {
-        _connection.Execute("UPDATE bestbuy.products SET Name = @name, Price = @price, OnSale = @onSale, StockLevel = @stockLevel WHERE ProductID = @id",
-            new { name = prod.Name, price = prod.Price, onSale = prod.OnSale, stockLevel = prod.StockLevel, id = prod.ProductID });
+        _connection.Execute("UPDATE bestbuy.products SET Name = @name, Price = @price, CategoryID = @catID, OnSale = @onSale, StockLevel = @stockLevel WHERE ProductID = @id",
+            new { name = prod.Name, price = prod.Price, catID = prod.CategoryID, onSale = prod.OnSale, stockLevel = prod.StockLevel, id = prod.ProductID });
     }
 
-    public void DeleteProduct(Product prod)
+    public void DeleteProduct(int id)
     {
-        _connection.Execute("DELETE from bestbuy.products WHERE ProductID = @prod.ProductID", new { id = prod.ProductID });
-        _connection.Execute("DELETE from bestbuy.reviews WHERE ProductID = @prod.ProductID", new { id = prod.ProductID });
-        _connection.Execute("DELETE from bestbuy.sales WHERE ProductID = @prod.ProductID", new { id = prod.ProductID });
+        _connection.Execute("DELETE from bestbuy.products WHERE ProductID = @id", new { id });
+        _connection.Execute("DELETE from bestbuy.reviews WHERE ProductID = @id", new { id });
+        _connection.Execute("DELETE from bestbuy.sales WHERE ProductID = @id", new { id });
     }
 }

@@ -1,3 +1,4 @@
+using MinimalAPI_Demo;
 using MySql.Data.MySqlClient;
 using System.Data;
 
@@ -18,7 +19,7 @@ builder.Services.AddScoped<IDbConnection>((s) =>
 
 var app = builder.Build();
 
-app.MapGet("/", (IProductRepo productRepo) => productRepo.GetProducts());
+app.MapGet("/", () => "Hello Mock Bestbuy API!");
 app.MapGet("/GetAllProducts", (IProductRepo productRepo) => productRepo.GetProducts());
 
 app.MapPost("/InsertProduct", (IProductRepo productRepo, Product product) =>
@@ -27,6 +28,23 @@ app.MapPost("/InsertProduct", (IProductRepo productRepo, Product product) =>
     product.ProductID = ++lastProductId;
     productRepo.InsertProduct(product);
 });
+
+app.MapPut("/UpdateProduct/{id:int}", (IProductRepo productRepo, Product inputProduct, int id) =>
+{
+    var productToUpdate = productRepo.GetProduct(id);
+    productToUpdate.Name = inputProduct.Name;
+    productToUpdate.Price = inputProduct.Price;
+    productToUpdate.CategoryID = inputProduct.CategoryID;
+    productToUpdate.OnSale = inputProduct.OnSale;
+    productToUpdate.StockLevel = inputProduct.StockLevel;
+    productRepo.UpdateProduct(productToUpdate);
+});
+
+app.MapDelete("/DeleteProduct/{id:int}", (IProductRepo productRepo, int id) =>
+{
+    productRepo.DeleteProduct(id);
+});
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
